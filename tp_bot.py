@@ -27,7 +27,11 @@ class TPClient(discord.Client):
         with open('tp_bot/adventures.json', 'r') as f:
             self._adventures = json.load(f)['adventures']
 
-        self.suggestions = []
+        try:
+            with open('tp_bot/suggestions.json', 'r') as f:
+                self._suggestions = json.load(f)
+        except FileNotFoundError:
+            self._suggestions = []
 
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
@@ -54,14 +58,17 @@ class TPClient(discord.Client):
         return story
 
     def add_suggestion(self, *args, **kwargs):
-        self.suggestions.append(' '.join(*args))
+        self._suggestions.append(' '.join(*args))
         self.save_suggestions()
 
-        return f'Thank you for your suggestion: {self.suggestions[-1]}'
+        return f'Thank you for your suggestion: {self._suggestions[-1]}'
 
     def save_suggestions(self):
         with open('tp_bot/suggestions.json', 'w') as f:
-            json.dump(self.suggestions, f)
+            json.dump(self._suggestions, f)
+
+    def list_suggestions(self, *args, **kwargs):
+        return '\n'.join(self._suggestions)
 
     async def on_message(self, message: str):
         if message.author == self.user:
@@ -90,8 +97,10 @@ class TPClient(discord.Client):
             self.get_adventure,
             '+':
             self.add_suggestion,
+            '+?':
+            self.list_suggestions,
             '?':
-            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n? - receive this help text\n\nSoon: propose an adventure.',
+            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\n? - receive this help text\n\nSoon: propose an adventure.',
         }
 
         if command in commands:
