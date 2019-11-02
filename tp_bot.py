@@ -1,3 +1,15 @@
+"""A discord bot that reflets the adventure hungry TürstopperPinguin
+(short: TP).
+
+TODO:
+    - load adventures from json file
+    - let users propose new adventures
+    - save proposed new adventures to additional json file
+    - check other guild.members for being bots -> leave guild if more than X
+        bots are present
+
+"""
+
 import discord
 import os
 import random
@@ -23,6 +35,9 @@ class TPClient(discord.Client):
         try:
             actor = args[0][0]
         except IndexError:
+            actor = 'TP'
+
+        if actor is None:
             actor = 'TP'
 
         adventures = [
