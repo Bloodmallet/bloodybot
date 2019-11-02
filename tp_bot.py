@@ -57,6 +57,8 @@ class TPClient(discord.Client):
         self.suggestions.append(' '.join(*args))
         self.save_suggestions()
 
+        return f'Thank you for your suggestion: {self.suggestions[-1]}'
+
     def save_suggestions(self):
         with open('tp_bot/suggestions.json', 'w') as f:
             json.dump(self.suggestions, f)
