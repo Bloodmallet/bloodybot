@@ -82,17 +82,20 @@ class TPClient(discord.Client):
         if not message.content.startswith(PREFIX):
             return
 
-        content = message.content.strip()
+        content: str = message.content.strip()
 
-        command = content[5:].split()[0]
+        try:
+            command = content[5:].split()[0]
+        except IndexError:
+            print(f'IndexError on {content}')
+            return
+
         try:
             params = content[5:].split()[1:] or [None]
         except IndexError:
             params = [None]
 
         commands = {
-            '':
-            self.get_adventure,
             '!':
             self.get_adventure,
             '+':
