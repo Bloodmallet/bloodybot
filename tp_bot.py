@@ -40,6 +40,9 @@ class TPClient(discord.Client):
         if message.author == self.user:
             return
 
+        if message.author.bot:
+            return
+
         PREFIX = '| "|>'
 
         if not message.content.startswith(PREFIX):
