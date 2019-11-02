@@ -38,7 +38,7 @@ class TPClient(discord.Client):
         print(f'Connected to {len(self.guilds)} guilds.')
         for guild in self.guilds:
             print(
-                f'  - {guild.name} (id: {guild.id}, member: {len(guild.members)})'
+                f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)'
             )
 
     def get_adventure(self, *args, **kwargs):
@@ -100,7 +100,9 @@ class TPClient(discord.Client):
             '+?':
             self.list_suggestions,
             '?':
-            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\n? - receive this help text\n\nSoon: propose an adventure.',
+            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\nInvite - return the invite-link to get this bot\n? - receive this help text',
+            'Invite':
+            'https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot',
         }
 
         if command in commands:
