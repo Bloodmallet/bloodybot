@@ -54,12 +54,17 @@ class TPClient(discord.Client):
             params = [None]
 
         commands = {
-            '!': self.adventure,
-            '?': 'You\'re part of a wild experiment. Stay tuned!'
+            '!':
+            self.adventure,
+            '?':
+            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n? - receive this help text\n\nSoon: propose an adventure.',
         }
 
         if command in commands:
-            await message.channel.send(commands[command](params))
+            if type(commands[command]) == str:
+                await message.channel.send(commands[command])
+            else:
+                await message.channel.send(commands[command](params))
 
 
 client = TPClient()
