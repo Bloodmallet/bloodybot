@@ -2,7 +2,7 @@ import discord
 import os
 import random
 
-from bot import secrets
+from tp_bot import secrets
 
 token = secrets.token
 
