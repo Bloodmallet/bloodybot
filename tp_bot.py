@@ -27,6 +27,8 @@ class TPClient(discord.Client):
         with open('tp_bot/adventures.json', 'r') as f:
             self._adventures = json.load(f)['adventures']
 
+        self.suggestions = []
+
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
         print(f'Connected to {len(self.guilds)} guilds.')
@@ -51,6 +53,14 @@ class TPClient(discord.Client):
 
         return story
 
+    def add_suggestion(self, *args, **kwargs):
+        self.suggestions.append(' '.join(*args))
+        self.save_suggestions()
+
+    def save_suggestions(self):
+        with open('tp_bot/suggestions.json', 'w') as f:
+            json.dump(self.suggestions, f)
+
     async def on_message(self, message: str):
         if message.author == self.user:
             return
@@ -72,10 +82,14 @@ class TPClient(discord.Client):
             params = [None]
 
         commands = {
+            '':
+            self.get_adventure,
             '!':
             self.get_adventure,
+            '+':
+            self.add_suggestion,
             '?':
-            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n? - receive this help text\n\nSoon: propose an adventure.',
+            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n? - receive this help text\n\nSoon: propose an adventure.',
         }
 
         if command in commands:
