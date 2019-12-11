@@ -4,13 +4,13 @@
 TODO:
     - check other guild.members for being bots -> leave guild if more than X
         bots are present
-
 """
 
 import discord
 import json
 import os
 import random
+from typing import List, Tuple
 
 from tp_bot import secrets
 
@@ -18,49 +18,78 @@ token = secrets.token
 
 
 class TPClient(discord.Client):
+    """Bot reacts to chat commands.
+    """
 
     def __init__(self, *args, **kwargs):
+        """Load the content of 'tp_bot/adventures.json' and 'tp_bot/suggestions.json'.
+        """
         super().__init__(*args, **kwargs)
 
         with open('tp_bot/adventures.json', 'r') as f:
-            self._adventures = json.load(f)['adventures']
+            self._adventures: List[str] = json.load(f)['adventures']
 
         try:
             with open('tp_bot/suggestions.json', 'r') as f:
-                self._suggestions = json.load(f)
+                self._suggestions: List[str] = json.load(f)
         except FileNotFoundError:
             self._suggestions = []
 
-    def add_suggestion(self, *args, **kwargs):
+    def add_suggestion(self, *args, **kwargs) -> str:
+        """Add user provided strings as an adventure suggestion. Resultstring
+        is saved to disk.
+
+        Returns:
+            [str]: Bot thanks the user for the suggestion.
+        """
         self._suggestions.append(' '.join(*args))
         self.save_suggestions()
 
         return f'Thank you for your suggestion: {self._suggestions[-1]}'
 
-    def get_adventure(self, *args, **kwargs):
+    def get_adventure(self, *args, **kwargs) -> str:
+        """An adventure is retrieved from the approved adventure list. If an
+        actor name was provided, this name is used. Else 'TP' is used.
+
+        Returns:
+            str: personalized adventure text
+        """
 
         try:
-            actor = args[0][0]
+            actor: str = args[0][0]
         except IndexError:
             actor = 'TP'
 
         if actor is None:
             actor = 'TP'
 
-        story = random.choice(self._adventures)
+        story: str = random.choice(self._adventures)
 
         story = story.replace('<ACTOR>', actor)
 
         return story
 
-    def list_suggestions(self, *args, **kwargs):
+    def list_suggestions(self, *args, **kwargs) -> str:
+        """Show all user-provided suggestions. This function might need to
+        leave...
+
+        Returns:
+            [str]: [description]
+        """
         return '\n'.join(self._suggestions)
 
-    def save_suggestions(self):
+    def save_suggestions(self) -> None:
+        """Save suggestions to file/disk.
+        """
         with open('tp_bot/suggestions.json', 'w') as f:
             json.dump(self._suggestions, f)
 
-    async def on_message(self, message: str):
+    async def on_message(self, message: str) -> None:
+        """React to user input (message).
+
+        Args:
+            message (str): [description]
+        """
         if message.author == self.user:
             return
 
@@ -102,6 +131,9 @@ class TPClient(discord.Client):
                 await message.channel.send(commands[command](params))
 
     async def on_ready(self):
+        """Start-up message. Let's the user know about active connections and
+        how many users are in each discord.
+        """
         print(f'{self.user} has connected to Discord!')
         print(f'Connected to {len(self.guilds)} guilds.')
         for guild in self.guilds:
