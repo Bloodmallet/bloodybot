@@ -18,6 +18,7 @@ token = secrets.token
 
 
 class TPClient(discord.Client):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -85,16 +86,13 @@ class TPClient(discord.Client):
             params = [None]
 
         commands = {
-            '!':
-            self.get_adventure,
-            '+':
-            self.add_suggestion,
-            '+?':
-            self.list_suggestions,
+            '!': self.get_adventure,
+            '+': self.add_suggestion,
+            '+?': self.list_suggestions,
             '?':
-            'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\nInvite - return the invite-link to get this bot\n? - receive this help text',
+                'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\nInvite - return the invite-link to get this bot\n? - receive this help text',
             'Invite':
-            'https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot',
+                'https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot',
         }
 
         if command in commands:
@@ -107,9 +105,7 @@ class TPClient(discord.Client):
         print(f'{self.user} has connected to Discord!')
         print(f'Connected to {len(self.guilds)} guilds.')
         for guild in self.guilds:
-            print(
-                f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)'
-            )
+            print(f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)')
 
 
 client = TPClient()
