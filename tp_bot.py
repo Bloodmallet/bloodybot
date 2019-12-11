@@ -2,9 +2,6 @@
 (short: TP).
 
 TODO:
-    - load adventures from json file
-    - let users propose new adventures
-    - save proposed new adventures to additional json file
     - check other guild.members for being bots -> leave guild if more than X
         bots are present
 
@@ -33,13 +30,11 @@ class TPClient(discord.Client):
         except FileNotFoundError:
             self._suggestions = []
 
-    async def on_ready(self):
-        print(f'{self.user} has connected to Discord!')
-        print(f'Connected to {len(self.guilds)} guilds.')
-        for guild in self.guilds:
-            print(
-                f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)'
-            )
+    def add_suggestion(self, *args, **kwargs):
+        self._suggestions.append(' '.join(*args))
+        self.save_suggestions()
+
+        return f'Thank you for your suggestion: {self._suggestions[-1]}'
 
     def get_adventure(self, *args, **kwargs):
 
@@ -57,18 +52,12 @@ class TPClient(discord.Client):
 
         return story
 
-    def add_suggestion(self, *args, **kwargs):
-        self._suggestions.append(' '.join(*args))
-        self.save_suggestions()
-
-        return f'Thank you for your suggestion: {self._suggestions[-1]}'
+    def list_suggestions(self, *args, **kwargs):
+        return '\n'.join(self._suggestions)
 
     def save_suggestions(self):
         with open('tp_bot/suggestions.json', 'w') as f:
             json.dump(self._suggestions, f)
-
-    def list_suggestions(self, *args, **kwargs):
-        return '\n'.join(self._suggestions)
 
     async def on_message(self, message: str):
         if message.author == self.user:
@@ -85,13 +74,13 @@ class TPClient(discord.Client):
         content: str = message.content.strip()
 
         try:
-            command = content[5:].split()[0]
+            command = content[len(PREFIX):].split()[0]
         except IndexError:
             print(f'IndexError on {content}')
             return
 
         try:
-            params = content[5:].split()[1:] or [None]
+            params = content[len(PREFIX):].split()[1:] or [None]
         except IndexError:
             params = [None]
 
@@ -113,6 +102,14 @@ class TPClient(discord.Client):
                 await message.channel.send(commands[command])
             else:
                 await message.channel.send(commands[command](params))
+
+    async def on_ready(self):
+        print(f'{self.user} has connected to Discord!')
+        print(f'Connected to {len(self.guilds)} guilds.')
+        for guild in self.guilds:
+            print(
+                f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)'
+            )
 
 
 client = TPClient()
