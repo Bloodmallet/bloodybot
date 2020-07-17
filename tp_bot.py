@@ -117,9 +117,9 @@ class TPClient(discord.Client):
         commands = {
             '!': self.get_adventure,
             '+': self.add_suggestion,
-            '+?': self.list_suggestions,
+            # '+?': self.list_suggestions,
             '?':
-                'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n! - receive one of many adventures\n! <name> - let <name> receive one of many adventures\n+ <adventure> - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure) \n+? - list all active suggestions\nInvite - return the invite-link to get this bot\n? - receive this help text',
+                'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n`!` - receive one of many adventures\n`! <name>` - let <name> receive one of many adventures\n`+ <adventure>` - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure)\n`Invite` - return the invite-link to get this bot\n`?` - receive this help text',
             'Invite':
                 'https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot',
         }
