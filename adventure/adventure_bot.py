@@ -15,12 +15,20 @@ class AdventureBot:
         logger.debug(params)
         path = f"characters/{message.author.id}.json"
 
+        first_name = None
+        last_name = None
+        if len(params) >= 2:
+            first_name = params[0]
+            last_name = params[1]
+
         if os.path.isfile(path) and not force:
             return "A character already exists."
 
         logger.debug(f"Generating character for user '{message.author.id}'.")
 
-        c = Character.create_new(message.author.id)
+        c = Character.create_new(
+            message.author.id, first_name=first_name, last_name=last_name
+        )
 
         with open(f"characters/{message.author.id}.json", "w") as f:
             json.dump(c.to_dict(), f, ensure_ascii=False)

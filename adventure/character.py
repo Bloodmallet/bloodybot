@@ -86,7 +86,7 @@ class Character:
 
     @property
     def next_level_exp_requirement(self) -> int:
-        return self.level ** 2 * 10
+        return self.level * 10
 
     def update_level(self):
         if self.exp >= self.next_level_exp_requirement:
@@ -134,7 +134,7 @@ class Character:
             json.dump(self.to_dict(), f, ensure_ascii=False)
 
     @classmethod
-    def create_new(cls, user_id: str):
+    def create_new(cls, user_id: str, *, first_name: str = None, last_name: str = None):
 
         cls.user_id = user_id
 
@@ -154,8 +154,10 @@ class Character:
         with open("adventure/races.csv", "r") as f:
             races = f.readlines()
 
-        cls.first_name = random.choice(names)
-        cls.last_name = random.choice(last_names).strip()
+        cls.first_name = random.choice(names) if first_name is None else first_name
+        cls.last_name = (
+            random.choice(last_names).strip() if last_name is None else last_name
+        )
         cls.title = ""
         cls.created_at = datetime.datetime.utcnow()
         cls.race = random.choice(races).strip()
