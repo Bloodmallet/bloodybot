@@ -18,19 +18,17 @@ token = secrets.token
 
 
 class TPClient(discord.Client):
-    """Bot reacts to chat commands.
-    """
+    """Bot reacts to chat commands."""
 
     def __init__(self, *args, **kwargs):
-        """Load the content of 'tp_bot/adventures.json' and 'tp_bot/suggestions.json'.
-        """
+        """Load the content of 'tp_bot/adventures.json' and 'tp_bot/suggestions.json'."""
         super().__init__(*args, **kwargs)
 
-        with open('tp_bot/adventures.json', 'r') as f:
-            self._adventures: List[str] = json.load(f)['adventures']
+        with open("tp_bot/adventures.json", "r") as f:
+            self._adventures: List[str] = json.load(f)["adventures"]
 
         try:
-            with open('tp_bot/suggestions.json', 'r') as f:
+            with open("tp_bot/suggestions.json", "r") as f:
                 self._suggestions: List[str] = json.load(f)
         except FileNotFoundError:
             self._suggestions = []
@@ -42,10 +40,10 @@ class TPClient(discord.Client):
         Returns:
             [str]: Bot thanks the user for the suggestion.
         """
-        self._suggestions.append(' '.join(*args))
+        self._suggestions.append(" ".join(*args))
         self.save_suggestions()
 
-        return f'Thank you for your suggestion: {self._suggestions[-1]}'
+        return f"Thank you for your suggestion: {self._suggestions[-1]}"
 
     def get_adventure(self, *args, **kwargs) -> str:
         """An adventure is retrieved from the approved adventure list. If an
@@ -58,14 +56,14 @@ class TPClient(discord.Client):
         try:
             actor: str = args[0][0]
         except IndexError:
-            actor = 'TP'
+            actor = "TP"
 
         if actor is None:
-            actor = 'TP'
+            actor = "TP"
 
         story: str = random.choice(self._adventures)
 
-        story = story.replace('<ACTOR>', actor)
+        story = story.replace("<ACTOR>", actor)
 
         return story
 
@@ -76,12 +74,11 @@ class TPClient(discord.Client):
         Returns:
             [str]: [description]
         """
-        return '\n'.join(self._suggestions)
+        return "\n".join(self._suggestions)
 
     def save_suggestions(self) -> None:
-        """Save suggestions to file/disk.
-        """
-        with open('tp_bot/suggestions.json', 'w') as f:
+        """Save suggestions to file/disk."""
+        with open("tp_bot/suggestions.json", "w") as f:
             json.dump(self._suggestions, f)
 
     async def on_message(self, message: str) -> None:
@@ -104,24 +101,22 @@ class TPClient(discord.Client):
         content: str = message.content.strip()
 
         try:
-            command = content[len(PREFIX):].split()[0]
+            command = content[len(PREFIX) :].split()[0]
         except IndexError:
-            print(f'IndexError on {content}')
+            print(f"IndexError on {content}")
             return
 
         try:
-            params = content[len(PREFIX):].split()[1:] or [None]
+            params = content[len(PREFIX) :].split()[1:] or [None]
         except IndexError:
             params = [None]
 
         commands = {
-            '!': self.get_adventure,
-            '+': self.add_suggestion,
+            "!": self.get_adventure,
+            "+": self.add_suggestion,
             # '+?': self.list_suggestions,
-            '?':
-                'Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | "|> and add a command afterwards. Commands:\n`!` - receive one of many adventures\n`! <name>` - let <name> receive one of many adventures\n`+ <adventure>` - suggest a new adventure (After a review your adventure might be added. Use \'<ACTOR>\' as the <name> placeholder in your adventure)\n`Invite` - return the invite-link to get this bot\n`?` - receive this help text',
-            'Invite':
-                'https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot',
+            "?": "Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | \"|> and add a command afterwards. Commands:\n`!` - receive one of many adventures\n`! <name>` - let <name> receive one of many adventures\n`+ <adventure>` - suggest a new adventure (After a review your adventure might be added. Use '<ACTOR>' as the <name> placeholder in your adventure)\n`Invite` - return the invite-link to get this bot\n`?` - receive this help text",
+            "Invite": "https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot",
         }
 
         if command in commands:
@@ -134,10 +129,10 @@ class TPClient(discord.Client):
         """Start-up message. Let's the user know about active connections and
         how many users are in each discord.
         """
-        print(f'{self.user} has connected to Discord!')
-        print(f'Connected to {len(self.guilds)} guilds.')
+        print(f"{self.user} has connected to Discord!")
+        print(f"Connected to {len(self.guilds)} guilds.")
         for guild in self.guilds:
-            print(f'  - {guild.name} (id: {guild.id}, {len(guild.members)} members)')
+            print(f"  - {guild.name} (id: {guild.id}, {len(guild.members)} members)")
 
 
 client = TPClient()
