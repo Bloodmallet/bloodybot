@@ -20,7 +20,7 @@ class AdventureBot:
 
         logger.debug(f"Generating character for user '{message.author.id}'.")
 
-        c = Character.create_new()
+        c = Character.create_new(message.author.id)
 
         with open(f"characters/{message.author.id}.json", "w") as f:
             json.dump(c.to_dict(), f, ensure_ascii=False)
@@ -29,13 +29,9 @@ class AdventureBot:
 
     def character_overview(self, message, *params):
         """Character overview"""
-        path = f"characters/{message.author.id}.json"
-        if not os.path.isfile(path):
-            return "No character found. Create one!"
 
-        with open(path, "r") as f:
-            data = json.load(f)
-
-        c = Character.load_from_dict(data)
-
+        try:
+            c = Character.load(message.author.id)
+        except ValueError:
+            return "No character found"
         return str(c)

@@ -25,22 +25,38 @@ class Stats:
         self._power = power
         self._speed = speed
         self._luck = luck
+        self._tmp_power = None
+        self._tmp_speed = None
+        self._tmp_luck = None
 
     def __str__(self) -> str:
         lines = ["Stats"]
-        lines.append(f"Power {self.power:>3d}")
-        lines.append(f"Speed {self.speed:>3d}")
-        lines.append(f"Luck  {self.luck:>3d}")
+        if self._tmp_power:
+            prefix = "+"
+            if self._tmp_power < 0:
+                prefix = ""
+            lines.append(f"Power {self.power:>3d} ({prefix}{self._tmp_power})")
+        else:
+            lines.append(f"Power {self.power:>3d}")
+        if self._tmp_speed:
+            prefix = "+"
+            if self._tmp_speed < 0:
+                prefix = ""
+            lines.append(f"Speed {self.speed:>3d} ({prefix}{self._tmp_speed})")
+        else:
+            lines.append(f"Speed {self.speed:>3d}")
+        if self._tmp_luck:
+            prefix = "+"
+            if self._tmp_luck < 0:
+                prefix = ""
+            lines.append(f"Luck  {self.luck:>3d} ({prefix}{self._tmp_luck})")
+        else:
+            lines.append(f"Luck  {self.luck:>3d}")
 
         return "\n".join(lines)
 
     def __repr__(self) -> str:
-        lines = ["Stats"]
-        lines.append(f"Power {self.power:>3d}")
-        lines.append(f"Speed {self.speed:>3d}")
-        lines.append(f"Luck  {self.luck:>3d}")
-
-        return "\n".join(lines)
+        return f"Stats {self.power} {self.speed} {self.luck}"
 
     def to_dict(self) -> dict:
         return {
