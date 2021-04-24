@@ -8,16 +8,21 @@ TODO:
 
 import discord
 import json
+import logging
 import os
 import random
 from typing import List, Tuple
 
 from tp_bot import secrets
+from adventure.adventure_bot import AdventureBot
 
 token = secrets.token
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 
-class TPClient(discord.Client):
+class TPClient(discord.Client, AdventureBot):
     """Bot reacts to chat commands."""
 
     def __init__(self, *args, **kwargs):
@@ -93,37 +98,61 @@ class TPClient(discord.Client):
         if message.author.bot:
             return
 
-        PREFIX = '| "|>'
+        PENGUIN_LONG = '| "|>'
+        PENGUIN_SHORT = '">'
 
-        if not message.content.startswith(PREFIX):
+        PREFIXES = [
+            PENGUIN_LONG,
+            PENGUIN_SHORT,
+        ]
+
+        active_prefix = None
+        for prefix in PREFIXES:
+            if message.content.startswith(prefix):
+                active_prefix = prefix
+                logger.info(
+                    f"Message with content prefix '{active_prefix}' in server {message.guild.name} detected."
+                )
+
+        if active_prefix is None:
             return
 
         content: str = message.content.strip()
 
         try:
-            command = content[len(PREFIX) :].split()[0]
+            command = content[len(active_prefix) :].split()[0]
         except IndexError:
             print(f"IndexError on {content}")
             return
 
         try:
-            params = content[len(PREFIX) :].split()[1:] or [None]
+            params = content[len(active_prefix) :].split()[1:] or [None]
         except IndexError:
             params = [None]
 
-        commands = {
-            "!": self.get_adventure,
-            "+": self.add_suggestion,
-            # '+?': self.list_suggestions,
-            "?": "Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | \"|> and add a command afterwards. Commands:\n`!` - receive one of many adventures\n`! <name>` - let <name> receive one of many adventures\n`+ <adventure>` - suggest a new adventure (After a review your adventure might be added. Use '<ACTOR>' as the <name> placeholder in your adventure)\n`Invite` - return the invite-link to get this bot\n`?` - receive this help text",
-            "Invite": "https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot",
-        }
+        if active_prefix == PENGUIN_SHORT:
+            params = [message] + params
+
+        if active_prefix == PENGUIN_LONG:
+            commands = {
+                "!": self.get_adventure,
+                "+": self.add_suggestion,
+                # '+?': self.list_suggestions,
+                "?": "Greetings, let me explain your options real quick:\nFor me to notice your message you need to start it with a penguin | \"|> and add a command afterwards. Commands:\n`!` - receive one of many adventures\n`! <name>` - let <name> receive one of many adventures\n`+ <adventure>` - suggest a new adventure (After a review your adventure might be added. Use '<ACTOR>' as the <name> placeholder in your adventure)\n`Invite` - return the invite-link to get this bot\n`?` - receive this help text",
+                "Invite": "https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot",
+            }
+        elif active_prefix == PENGUIN_SHORT:
+            commands = {
+                "new": self.create_new_character,
+                "c": self.character_overview,
+                "overview": self.character_overview,
+            }
 
         if command in commands:
-            if type(commands[command]) == str:
+            if isinstance(commands[command], str):
                 await message.channel.send(commands[command])
             else:
-                await message.channel.send(commands[command](params))
+                await message.channel.send(commands[command](*params))
 
     async def on_ready(self):
         """Start-up message. Let's the user know about active connections and
