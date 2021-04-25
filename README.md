@@ -11,14 +11,38 @@ discord.
 
 [https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot](https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot)
 
-## Features
-- TP tells you about his awesome adventures
-- TP tells you awesome adventures of your dear ones
-- suggest new adventures to TP
-- TP can provide you his invite link
-- TP can explain his abilities to you
+## Modes
+### Story-Mode
+TP tells you stories. Ask him for some...
 
-## Feature Requests
-Please send your feature requests via
+Prefix: `| "|>`
+
+Available commands (after the prefix):
+- `! [NAME:optional]` TP tells you a story. [NAME] defaults to `TP`.
+- `+ [STORY]` tell TP a story. If he likes it, he'll continue to tell it to 
+others. Use `<ACTOR>` as the [NAME] placeholder in your adventure. E.g. `| "|> + <ACTOR> is looking for more sushi!`
+- `Invite` get the invite link to invite TP to your own discord server.
+- `?` help-text
+
+### Adventure-Mode
+Create your own character, who levels alongside your stay.
+
+Prefix: `">`
+
+Available commands (after prefix):
+- `new-character [FIRST_NAME LAST_NAME: optional] [!:optional]` create a new 
+character. If [FIRST_NAME LAST_NAME] are provided, the new character will have 
+that name. Otherwise random. [!] allows you to create a new character, even 
+though you already have one. E.g. `"> new-character Max Mustermann !`
+- `c` or `overview` view your character overview (name, race, level, stats)
+- `q` or `questlog` view your active questlog
+- `start-quest` go on a random quest (if you're already on a quest, that one 
+will be aborted)
+- `?` help-text
+
+## Development
+Pull requests are welcome. Help by adding features or extending available 
+options like race, quests, or names.  Otherwise please send your feature 
+requests via
 [Github Issues](https://github.com/Bloodmallet/bloodybot/issues/new) or
 [Twitter @bloodmallet](https://twitter.com/bloodmallet).
