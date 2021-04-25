@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Wollen wir nicht alle nur Kuchen?",
+        "description_short": "Gehe in den Wald und finde 3 Limonengräser. Doch gib acht, dort draußen lauert mehr.",
+        "description": "\"Oh Liebes, da bist du ja endlich!\" Ein Lächeln erscheint auf dem Gesicht der älteren Frau, als sie vom Küchentisch aufsieht. Einige Schüsseln, Mehl und ein paar Eier liegen vor ihr. \"Ich habe bereits auf dich gewartet. Ich wollte einen Kuchen backen, aber leider fehlen mir ein paar Zutaten. Magst du für mich in den Wald gehen und sie besorgen? Meine alten Knochen und dieses nasskalte Wetter dort draußen... Es verträgt sich einfach nicht.\" Das Lächeln schwindet nicht von ihrem Gesicht. Sie sieht dich nur weiter erwartungsvoll an, während eine Hand abwesend über die Kuchenform streicht. Unwillkürlich fragst du dich, wann du sie hast das letzte Mal Kuchen essen sehen, und erinnerst dich daran, wie gerne sie geteilt hat.\nDu nickst. \"Prima!\", ihre Augen leuchten, \"Hier, eine kleine Liste. Und ich hab dir genau aufgemalt, wo du was findest. Der Wald ist nicht weit.\"\nSie drückt dir einen Apfel in die Hand, bevor du gehst.",
+        "reward_exp": 5,
+        "reward_loot": null,
+        "optional_loot": null,
+        "optional_chance": null,
+        "duration": 180
+    },
+    {
+        "name": "Für jeden eine Aufgabe!",
+        "description_short": "Finde eine geeignete Waffe und haue auf 3 Trainingspuppen.\nFrage einen anderen Abenteurer, ob er Interesse an gemeinsamen Training ist.\nOh, und ist das eine Rübe? Vielleicht freut sich eines der Pferde ja darüber!",
+        "description": "\"Nun, junger Held, nicht jeder hat sofort das Zeug dazu, große Abenteuer zu erleben. Während einige nur die richtige Waffe brauchen, bedürfen andere erst einfacher Aufgaben, um zu erkennen, dass auch sie für großes geschaffen sind.\nBist auch du dir unsicher, ob du es schaffen kannst, Held großer Sagen zu werden? Dann hab ich die perfekte Aufgabe für dich. Folge mir.\" Der Mann lächelt dich wohlwollend an und berührt dich sanft am Rücken, um dich durch ein Tor zu schieben. Dahinter siehst du große Trainingsfelder, einige andere Abenteurer und einen Stall voller Pferde. Du fühlst dich aufgeregt, bis du erneut die Stimme des Mannes an deinen Ohren hörst: \"Keine falsche Scheu. Hier beurteilt niemand einen anderen. Nimm dir die Zeit, die du brauchst, um großartig zu werden.\"",
+        "reward_exp": 70,
+        "reward_loot": null,
+        "optional_loot": null,
+        "optional_chance": null,
+        "duration": 2700
+    }
+]

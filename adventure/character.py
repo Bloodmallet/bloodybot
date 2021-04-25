@@ -1,14 +1,21 @@
 from datetime import datetime
 from .stats import Stat, Stats
+from .quests import Quest, get_quests
 import csv
 import random
 import datetime
 import json
 import logging
 import os
-
+import enum
 
 logger = logging.getLogger(__name__)
+
+
+class Status(enum.Enum):
+    IDLE = "idle"
+    ADVENTURE = "adventure"
+    QUEST = "quest"
 
 
 class Character:
@@ -31,18 +38,26 @@ class Character:
 
     equipment = []
 
+    quest_name: str = None
+    quest_start_time: datetime.datetime = None
+
+    adventure_start_time: datetime.datetime = None
+
     def __init__(self) -> None:
-        pass
+        self.messages = []
 
     def __str__(self) -> str:
         lines = [
             "```Markdown",
-            f"[{self.race}] {self.full_name} ({self.age})",
+            f"{self.full_name} [{self.race}]",
             f"Level: {self.level} ({self.exp} / {self.next_level_exp_requirement})",
+            self.status,
             "",
             f"{self.stats}",
             "```",
         ]
+        if self.messages:
+            lines = self.messages + lines
         return "\n".join(lines)
 
     def __repr__(self) -> str:
@@ -62,6 +77,10 @@ class Character:
             "level": self.level,
             "exp": self.exp,
             "last_time_based_exp": str(self.last_time_based_exp),
+            "quest_name": self.quest_name,
+            "quest_start_time": str(self.quest_start_time)
+            if self.quest_start_time
+            else None,
         }
 
     @property
@@ -88,10 +107,68 @@ class Character:
     def next_level_exp_requirement(self) -> int:
         return self.level * 10
 
+    @property
+    def status(self):
+        if self.quest_name:
+            text = ""
+            quest = self.get_quest(self.quest_name)
+            remaining_duration = datetime.timedelta(
+                seconds=quest.effective_duration(self.stats.speed)
+            ) - (datetime.datetime.utcnow() - self.quest_start_time)
+            if remaining_duration > datetime.timedelta(seconds=0):
+                stringyfied = str(remaining_duration).split(".")[0]
+                text = f"remaining: {stringyfied:0>8}"
+            else:
+                text = f"done"
+
+            return f"Quest: {quest.name} ({text})"
+        elif self.adventure_start_time:
+            return "Adventuring"
+        else:
+            return "Idle"
+
+    def load_quests(self):
+        if not hasattr(self, "_quests"):
+            self._quests = get_quests()
+        return self._quests
+
+    def get_quest(self, name: str) -> Quest:
+        self.load_quests()
+        for quest in self._quests:
+            if quest.name == name:
+                return quest
+        return None
+
+    def roll(self, chance: float) -> bool:
+        return random.random() * 10000.0 <= chance * 100.0
+
+    def turn_in_quest(self):
+        if not self.quest_name:
+            return
+        if "done" in self.status:
+            quest = self.get_quest(self.quest_name)
+            self.exp += quest.reward_exp
+            self.quest_name = None
+            self.quest_start_time = None
+            self.messages.append(f"Quest '{quest.name}' completed.")
+            self.messages.append(f"Received {quest.reward_exp} experience points.")
+            if quest.reward_loot:
+                self.inventory.append(quest.reward_loot)
+            if quest.optional_loot:
+                if self.roll(quest.optional_chance):
+                    self.inventory.append(quest.optional_loot)
+
+    def go_on_quest(self, quest: Quest):
+        self.quest_name = quest.name
+        self.quest_start_time = datetime.datetime.utcnow()
+        self.save()
+
     def update_level(self):
         if self.exp >= self.next_level_exp_requirement:
             self.exp = self.exp - self.next_level_exp_requirement
             self.level += 1
+
+            self.messages.append('Level up! :tada: TP is so proud of you. !<"')
 
             power = random.randint(0, 2)
             # luck effect
@@ -123,6 +200,7 @@ class Character:
             self.last_time_based_exp = now
 
     def self_update(self):
+        self.turn_in_quest()
         self.update_exp()
         self.update_level()
 
@@ -130,7 +208,7 @@ class Character:
 
     def save(self):
         path = f"characters/{self.user_id}.json"
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, ensure_ascii=False)
 
     @classmethod
@@ -138,7 +216,7 @@ class Character:
 
         cls.user_id = user_id
 
-        with open("adventure/first_names.csv", "r") as f:
+        with open("adventure/first_names.csv", "r", encoding="utf-8") as f:
             content = f.readlines()
 
         first_name_data = csv.reader(content, delimiter="\t")
@@ -148,10 +226,10 @@ class Character:
             names.append(row[1])
             names.append(row[3])
 
-        with open("adventure/last_names.csv", "r") as f:
+        with open("adventure/last_names.csv", "r", encoding="utf-8") as f:
             last_names = f.readlines()
 
-        with open("adventure/races.csv", "r") as f:
+        with open("adventure/races.csv", "r", encoding="utf-8") as f:
             races = f.readlines()
 
         cls.first_name = random.choice(names) if first_name is None else first_name
@@ -166,6 +244,9 @@ class Character:
         cls.exp = 0
 
         cls.stats = Stats()
+
+        cls.quest_name = None
+        cls.quest_start_time = None
 
         return cls()
 
@@ -183,7 +264,7 @@ class Character:
         if not os.path.isfile(path):
             raise ValueError("No character found. Create one!")
 
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             d = json.load(f)
 
         cls.user_id = d["user_id"]
@@ -200,6 +281,14 @@ class Character:
         cls.last_time_based_exp = datetime.datetime.fromisoformat(
             d.get("last_time_based_exp", d["created_at"])
         )
+
+        cls.quest_name = d.get("quest_name", None)
+
+        quest_start_time = d.get("quest_start_time", None)
+        if quest_start_time:
+            cls.quest_start_time = datetime.datetime.fromisoformat(quest_start_time)
+        else:
+            cls.quest_start_time = None
 
         character = cls()
 

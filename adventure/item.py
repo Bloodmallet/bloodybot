@@ -1,6 +1,6 @@
 import enum
 import typing
-from .stats import Stat
+from .stats import Stats
 
 import random
 
@@ -41,6 +41,6 @@ class Rarity(enum.Enum):
 class Item:
     def __init__(self) -> None:
         self.slot: typing.Optional[Slot] = None
-        self.stat: typing.Optional[Stat] = None
+        self.stats: Stats = None
         self.value: float = 0.0
         self.rarity: Rarity = None

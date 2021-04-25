@@ -1,9 +1,10 @@
 from .character import Character
+from .quests import get_quests
 
 import logging
 import json
-
 import os
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -41,5 +42,39 @@ class AdventureBot:
         try:
             c = Character.load(message.author.id)
         except ValueError:
+            logger.exception("Character load failed.")
             return "No character found"
         return str(c)
+
+    def start_quest(self, message, *params):
+
+        try:
+            c = Character.load(message.author.id)
+        except ValueError:
+            return "No character found"
+
+        if not hasattr(self, "_quests"):
+            self._quests = get_quests()
+
+        quest = random.choice(self._quests)
+        c.go_on_quest(quest)
+
+        return str(quest)
+
+    def questlog(self, message, *params):
+        try:
+            c = Character.load(message.author.id)
+        except ValueError:
+            return "No character found"
+
+        if c.quest_name is None:
+            return f"{c.full_name} is currently on no quest."
+
+        if not hasattr(self, "_quests"):
+            self._quests = get_quests()
+
+        for quest in self._quests:
+            if quest.name == c.quest_name:
+                return f"{c.full_name} Questlog:\n{quest}"
+
+        return f"{c.full_name} fell into the abyss of a non-existing quest?"

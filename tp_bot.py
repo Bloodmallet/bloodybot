@@ -144,8 +144,13 @@ class TPClient(discord.Client, AdventureBot):
         elif active_prefix == PENGUIN_SHORT:
             commands = {
                 "new": self.create_new_character,
+                "new-character": self.create_new_character,
                 "c": self.character_overview,
                 "overview": self.character_overview,
+                "start-quest": self.start_quest,
+                "q": self.questlog,
+                "questlog": self.questlog,
+                "?": "Options:\n- `?` show help text\n- `new-character [FIRST_NAME:optional] [LAST_NAME:optional] [!:optional]`, create a new character. [FIRST_NAME] and [LAST_NAME] set the character name, need to be provided as a pair. [!] deletes your existing character to create a new one.\n- `c` or `overview`, view your character overview\n- `start-quest` receive a random quest (if you're already on a quest, that one will be aborted)\n- `q` or `questlog`, view your active questlog\n\n Invite this bot to your own discord using this link: <https://discordapp.com/api/oauth2/authorize?client_id=639876959350030338&permissions=2048&scope=bot>",
             }
 
         if command in commands:
