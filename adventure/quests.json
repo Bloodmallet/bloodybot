@@ -18,5 +18,15 @@
         "optional_loot": null,
         "optional_chance": null,
         "duration": 2700
+    },
+    {
+        "name": "Um Himmelswillen das Yak ist weg!",
+        "description_short": "Finde das Yak",
+        "description": "\"Reisender, gut das ich dich hier treffe! Du musst mir helfen! Mein Yak ist weg. Mein preisgekröntes Tier, mit dem ich auch dieses Jahr wieder am Wettbewerb der haarigsten Haustiere teilnehmen wollte! Du musst mir helfen. Wie soll ich sonst meinen Titel verteidigen? Ich weiß auch, wer es gewesen ist, ganz bestimmt! Der Bauer Heinold, der mit seinem Nacktmull die letzten Jahre nur knapp das Treppchen verpasst hat. Geh zu ihm und hol mein Yak zurück.\"",
+        "reward_exp": 120,
+        "reward_loot": null,
+        "optional_loot": null,
+        "optional_chance": null,
+        "duration": 4800
     }
 ]
