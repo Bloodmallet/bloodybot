@@ -247,6 +247,7 @@ class Character:
 
         cls.quest_name = None
         cls.quest_start_time = None
+        cls.last_time_based_exp = None
 
         return cls()
 
